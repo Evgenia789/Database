@@ -31,6 +31,7 @@ CREATE TABLE Employees (
   FOREIGN KEY(Department_id) REFERENCES Departments(id)
 );
 
+
 -- Показать работников у которых нет почты или почта не в корпоративном домене (домен dualbootpartners.com)
 SELECT Name, Last_name
 FROM Employees
