@@ -1,24 +1,7 @@
 -- Создание таблиц
-CREATE TABLE Employees (
+CREATE TABLE Regions (
   id serial PRIMARY KEY,
-  Name varchar,
-  Last_name varchar,
-  Hire_date DATE,
-  Salary integer,
-  Email varchar,
-  Manager_id integer,
-  Department_id integer,
-  FOREIGN KEY(Manager_id) REFERENCES Managers(id),
-  FOREIGN KEY(Department_id) REFERENCES Departments(id)
-);
-
-CREATE TABLE Departments (
-  id serial PRIMARY KEY,
-  Name varchar,
-  Location_id integer,
-  Manager_id integer,
-  FOREIGN KEY(Location_id) REFERENCES Locations(id),
-  FOREIGN KEY(Manager_id) REFERENCES Managers(id)
+  Name varchar
 );
 
 CREATE TABLE Locations (
@@ -28,9 +11,24 @@ CREATE TABLE Locations (
   FOREIGN KEY(Region_id) REFERENCES Regions(id)
 );
 
-CREATE TABLE Regions (
+CREATE TABLE Departments (
   id serial PRIMARY KEY,
-  Name varchar
+  Name varchar,
+  Location_id integer,
+  Manager_id integer,
+  FOREIGN KEY(Location_id) REFERENCES Locations(id)
+);
+
+CREATE TABLE Employees (
+  id serial PRIMARY KEY,
+  Name varchar,
+  Last_name varchar,
+  Hire_date DATE,
+  Salary integer,
+  Email varchar,
+  Manager_id integer,
+  Department_id integer,
+  FOREIGN KEY(Department_id) REFERENCES Departments(id)
 );
 
 -- Показать работников у которых нет почты или почта не в корпоративном домене (домен dualbootpartners.com)
@@ -41,7 +39,7 @@ WHERE Email IS NULL OR Email NOT IN "dualbootpartners.com";
 -- Получить список работников нанятых в последние 30 дней
 SELECT Name, Last_name, Hire_date
 FROM Employees
-WHERE  DATEDIFF(NOW(), Hire_date) <= 30;
+WHERE EXTRACT(DAY FROM NOW() - Hire_date) <= 30;
 
 -- Найти максимальную и минимальную зарплату по каждому департаменту
 SELECT max(Employees.salary) AS max_salary, min(Employees.salary) AS min_salary, Departments.Name AS department_name
