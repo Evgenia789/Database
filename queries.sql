@@ -26,21 +26,24 @@ CREATE TABLE Employees (
   Hire_date DATE,
   Salary integer,
   Email varchar,
-  Manager_id integer,
   Department_id integer,
+  Manager_id integer REFERENCES Employees(id),
   FOREIGN KEY(Department_id) REFERENCES Departments(id)
 );
 
+ALTER TABLE Departments
+ADD CONSTRAINT fk_manager
+FOREIGN KEY (Manager_id) REFERENCES Employees(id);
 
 -- Показать работников у которых нет почты или почта не в корпоративном домене (домен dualbootpartners.com)
 SELECT Name, Last_name
 FROM Employees
-WHERE Email IS NULL OR Email NOT IN "dualbootpartners.com";
+WHERE Email IS NULL OR Email NOT LIKE '%dualbootpartners.com';
 
 -- Получить список работников нанятых в последние 30 дней
 SELECT Name, Last_name, Hire_date
 FROM Employees
-WHERE EXTRACT(DAY FROM NOW() - Hire_date) <= 30;
+WHERE CURRENT_DATE - Hire_date <= 30;
 
 -- Найти максимальную и минимальную зарплату по каждому департаменту
 SELECT max(Employees.salary) AS max_salary, min(Employees.salary) AS min_salary, Departments.Name AS department_name
@@ -66,4 +69,4 @@ SELECT Employees.Name, Employees.Last_name, Employees.Salary
 FROM Employees
 WHERE Salary > (
     SELECT avg(Salary) AS avg_salary
-    FROM Employees) avg_salary;
+    FROM Employees);
